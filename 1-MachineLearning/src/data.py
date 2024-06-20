@@ -26,18 +26,17 @@ def preprocessing():
 
     # split
     train_data, test_data = train_test_split(rating_data, test_size=0.2, random_state=parameters.RANDOM_SEED)
-    return train_data, test_data, user_num, anime_num
+    train_data, validate_data = train_test_split(train_data, test_size=0.25, random_state=parameters.RANDOM_SEED)
+
+    return train_data, test_data, validate_data, user_num, anime_num
 
 
 class AnimeDataset(Dataset):
 
-    def __init__(self, df, user_num, anime_num):
+    def __init__(self, df):
         self.user_ids = torch.tensor(np.array(df['user_id']))
         self.anime_ids = torch.tensor(np.array(df['anime_id']))
         self.ratings = torch.tensor(np.array(df['rating']), dtype=torch.float)
-
-        self.user_num = user_num
-        self.anime_num = anime_num
 
     def __len__(self):
         return len(self.ratings)
