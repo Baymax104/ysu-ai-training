@@ -9,20 +9,15 @@ OPTIM_PARAMS = {
         'lr': 0.1,
         'weight_decay': 1e-4,
     },
-    'GMF': {
-        'lr': 0.01,
-        'weight_decay': 1e-4,
-    },
     'MLP': {
         'lr': 0.05,
-        'weight_decay': 2e-4,
-    }
+        'weight_decay': 5e-4,
+    },
 }
 
-
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-DATA_DIR = '/root/autodl-tmp/dataset'  # for autodl
-LOG_DIR = '/root/tf-logs'  # for autodl
+# DATA_DIR = '/root/autodl-tmp/dataset'  # for autodl
+# LOG_DIR = '/root/tf-logs'  # for autodl
 # DEVICE = 'cpu'  # for debug
-# DATA_DIR = '../dataset'  # for local
-# LOG_DIR = '../logs'  # for local
+DATA_DIR = '../dataset'  # for local
+LOG_DIR = '../logs'  # for local

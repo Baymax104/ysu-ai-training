@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 import os
 
+import numpy as np
 import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
-import numpy as np
 
 import parameters
 

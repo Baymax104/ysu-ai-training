@@ -1,14 +1,13 @@
 # -*- coding: UTF-8 -*-
 import torch
 from torch.nn import MSELoss
-from torch.optim import SGD, Adam
+from torch.optim import SGD
 from torch.utils.data import DataLoader
 from torchmetrics.regression import MeanAbsoluteError, MeanSquaredError
 from tqdm import tqdm
 
 import parameters
 from data import preprocessing, AnimeDataset
-from model.gmf import GMF
 from model.mf import MF
 from model.mlp import MLP
 from model.wrapper import ModelWrapper
@@ -49,7 +48,6 @@ def train(train_loader, validation_loader, model_wrapper):
         train_metrics['Loss'] = train_loss
         metrics.reset()
         recorder.add_train_record(e, train_metrics)
-
 
         model.eval()
         with torch.no_grad():
@@ -92,13 +90,6 @@ if __name__ == '__main__':
         metrics=[MeanAbsoluteError(), MeanSquaredError(squared=False)]
     )
 
-    gmf_wrapper = ModelWrapper(
-        model=GMF(user_num, anime_num),
-        optimizer=SGD,
-        criterion=MSELoss,
-        metrics=[MeanAbsoluteError(), MeanSquaredError(squared=False)]
-    )
-
     mlp_wrapper = ModelWrapper(
         model=MLP(user_num, anime_num),
         optimizer=SGD,
@@ -106,4 +97,4 @@ if __name__ == '__main__':
         metrics=[MeanAbsoluteError(), MeanSquaredError(squared=False)]
     )
 
-    train(train_loader, validate_loader, gmf_wrapper)
+    train(train_loader, validate_loader, mf_wrapper)
