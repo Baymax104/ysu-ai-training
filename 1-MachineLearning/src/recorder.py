@@ -9,16 +9,22 @@ import parameters
 
 class Recorder:
 
-    def __init__(self):
-        log_dir = os.path.join(parameters.LOG_DIR, datetime.now().strftime('%Y%m%d-%H%M%S'))
+    def __init__(self, model_name):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_dir = os.path.join(parameters.LOG_DIR, f'{model_name}_{timestamp}')
         self.writer = SummaryWriter(log_dir=log_dir)
+        self.train_metrics = {}
+        self.validate_metrics = {}
 
-    def add_record(self, step, tag_value_dict):
-        for tag, value in tag_value_dict.items():
-            if type(value) is dict:
-                self.writer.add_scalars(global_step=step, main_tag=tag, tag_scalar_dict=value)
-            else:
-                self.writer.add_scalar(global_step=step, tag=tag, scalar_value=value)
+    def add_train_record(self, step, metric_dict):
+        for tag, value in metric_dict.items():
+            self.writer.add_scalar(global_step=step, tag=f'{tag}/Train', scalar_value=value)
+
+
+    def add_validate_record(self, step, metric_dict):
+        for tag, value in metric_dict.items():
+            self.writer.add_scalar(global_step=step, tag=f'{tag}/Validate', scalar_value=value)
+
 
     def show(self):
         self.writer.close()
