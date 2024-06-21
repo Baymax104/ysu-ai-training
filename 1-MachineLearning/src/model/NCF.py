@@ -32,4 +32,4 @@ class NCF(nn.Module):
         mlp_output = self.mlp(mlp_input)
 
         ncf_input = torch.cat([gmf_output, mlp_output], dim=1)
-        return self.ncf_linear(ncf_input)
+        return self.ncf_linear(ncf_input).squeeze()
