@@ -11,7 +11,7 @@ class ModelWrapper:
         self.name = model.__class__.__name__
         self.model = model.to(parameters.DEVICE)
         self.criterion = criterion().to(parameters.DEVICE)
-        self.metrics = MetricCollection([m.to(parameters.DEVICE) for m in metrics])
+        self.metrics = MetricCollection(metrics).to(parameters.DEVICE)
 
         optim_params = parameters.OPTIM_PARAMS[self.name]
         self.optimizer = optimizer(model.parameters(), **optim_params)
