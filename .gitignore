@@ -174,3 +174,6 @@ cython_debug/
 
 1-MachineLearning/04_cnn/dataset/*
 !1-MachineLearning/04_cnn/dataset/.placeholder
+
+1-MachineLearning/03_bp_network/dataset/*
+!1-MachineLearning/03_bp_network/dataset/.placeholder
