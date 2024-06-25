@@ -1,13 +1,12 @@
 # -*- coding: UTF-8 -*-
-import pandas as pd
 import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+from prettytable import PrettyTable
+from sklearn.metrics import log_loss, accuracy_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import load_iris
-from sklearn.metrics import log_loss, accuracy_score, f1_score
-from prettytable import PrettyTable
 from tqdm import tqdm
-from matplotlib import pyplot as plt
 
 from LogisticRegression import LogisticRegression
 

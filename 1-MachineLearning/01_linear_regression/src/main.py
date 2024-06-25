@@ -1,13 +1,12 @@
 # -*- coding: UTF-8 -*-
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import fetch_california_housing
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error
-import pandas as pd
 import numpy as np
-from tqdm import tqdm
+import pandas as pd
 from matplotlib import pyplot as plt
 from prettytable import PrettyTable
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
 
 from LinearRegression import LinearRegression
 

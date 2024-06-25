@@ -10,4 +10,3 @@ LEARNING_RATE = 0.01
 DATA_DIR = '../dataset'  # for local
 # DATA_DIR = '/root/autodl-tmp'  # for autodl
 LOG_DIR = '../logs'
-

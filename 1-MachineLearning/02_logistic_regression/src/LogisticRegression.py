@@ -23,7 +23,6 @@ class LogisticRegression:
         self.weights -= self.lr * grad
         return y_hat
 
-
     def predict(self, X):
         X = np.concatenate((X, np.ones((X.shape[0], 1))), axis=1)
         return sigmoid(X @ self.weights)

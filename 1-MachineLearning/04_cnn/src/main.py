@@ -3,14 +3,14 @@ import os.path
 
 import torch
 from matplotlib import pyplot as plt
-from torchmetrics import MetricCollection
-from torchvision.datasets import MNIST
-from torch.utils.data import DataLoader
-from torchvision import transforms
-from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
-from tqdm import tqdm
+from torch.optim import SGD
+from torch.utils.data import DataLoader
+from torchmetrics import MetricCollection
 from torchmetrics.classification import MulticlassAccuracy, MulticlassF1Score
+from torchvision import transforms
+from torchvision.datasets import MNIST
+from tqdm import tqdm
 
 import parameters as param
 from cnn import CNN
