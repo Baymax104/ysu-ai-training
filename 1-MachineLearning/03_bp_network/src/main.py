@@ -48,7 +48,7 @@ def train(model, train_loader):
     loss_history = []
     acc_history = []
 
-    for _ in tqdm(range(1, parameters.EPOCHS + 1)):
+    for _ in tqdm(range(parameters.EPOCHS)):
         pred = model.fit(data, target)
         loss = MSE(pred, target)
 
