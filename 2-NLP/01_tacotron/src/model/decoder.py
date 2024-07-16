@@ -4,6 +4,7 @@ from torch import nn
 
 from .attention import Attention
 from .prenet import PreNet
+from .stopnet import StopNet
 
 
 class AttentionRNN(nn.Module):
@@ -52,6 +53,7 @@ class Decoder(nn.Module):
         self.projection_to_decoder = nn.Linear(in_features=128, out_features=256)
         self.decoder_rnns = nn.ModuleList([DecoderRNN(input_size=256, hidden_size=256) for _ in range(2)])
         self.projection_to_mel = nn.Linear(in_features=256, out_features=frame_features * r)
+        self.stopnet = StopNet(256 + frame_features * r)
 
         # (batch, 256)
         self.attention_rnn_hidden = torch.zeros(1).repeat(batch_size, 256)
@@ -83,13 +85,19 @@ class Decoder(nn.Module):
         decoder_output = decoder_input
 
         # generate r frames
+        # (batch, frame_features * r)
         output = self.projection_to_mel(decoder_output)
-        return output
+
+        # predict stop token
+        stopnet_input = torch.cat([decoder_output, output], dim=-1)
+        stop_token = self.stopnet(stopnet_input)
+        return output, stop_token
 
     def forward(self, x):
         # (batch, time_step, 256)
         frame_input = torch.zeros(1).repeat(self.batch_size, self.frame_features)
         outputs = []
+        stop_tokens = []
         t = 0
         # for every time step
         while len(outputs) < x.size(dim=1):
@@ -97,12 +105,15 @@ class Decoder(nn.Module):
                 new_frame = outputs[t - 1]
                 # use last frame
                 frame_input = new_frame[:, self.frame_features * (self.r - 1):]
-            output = self.decode(x, frame_input)
+            output, stop_token = self.decode(x, frame_input)
             outputs.append(output)
+            stop_tokens.append(stop_token)
             t += 1
+        # (batch, time_step)
+        stop_tokens = torch.stack(stop_tokens).transpose(0, 1).squeeze()
         # (time_step, batch, frame_features * r)
         # (batch, time_step, frame_features * r)
         outputs = torch.stack(outputs).transpose(0, 1).contiguous()
         outputs = outputs.view(outputs.size(0), -1, self.frame_features)
         outputs = outputs.transpose(1, 2)
-        return outputs
+        return outputs, stop_tokens
