@@ -177,3 +177,6 @@ cython_debug/
 
 1-MachineLearning/03_bp_network/dataset/*
 !1-MachineLearning/03_bp_network/dataset/.placeholder
+
+2-NLP/01_tacotron/data/*
+!2-NLP/01_tacotron/data/.placeholder

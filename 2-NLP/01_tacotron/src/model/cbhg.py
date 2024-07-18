@@ -5,7 +5,7 @@ from torch import nn
 
 
 class BatchNormConv1d(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, activation=None):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
         super(BatchNormConv1d, self).__init__()
         self.pad = nn.ConstantPad1d(padding, 0)
         self.conv1d = nn.Conv1d(
@@ -17,14 +17,11 @@ class BatchNormConv1d(nn.Module):
             bias=False
         )
         self.bn = nn.BatchNorm1d(out_channels)
-        self.activation = activation
 
     def forward(self, x):
         x = self.pad(x)
         x = self.conv1d(x)
         x = self.bn(x)
-        if self.activation is not None:
-            x = self.activation(x)
         return x
 
 
@@ -73,7 +70,6 @@ class CBHG(nn.Module):
                 kernel_size=k,
                 stride=1,
                 padding=((k - 1) // 2, k // 2),
-                activation=nn.ReLU()
             ) for k in range(1, K + 1)
         ])
 
@@ -85,7 +81,6 @@ class CBHG(nn.Module):
                 kernel_size=3,
                 stride=1,
                 padding=(1, 1),
-                activation=nn.ReLU()
             ) for (in_size, out_size) in zip(bank_out_features, conv_projections)
         ])
 
@@ -114,7 +109,7 @@ class CBHG(nn.Module):
         # conv1d bank
         # (batch, features * K, time_step)
         for conv1d in self.conv1d_banks:
-            out = conv1d(x)
+            out = F.relu(conv1d(x))
             bank_outputs.append(out)
         x = torch.cat(bank_outputs, dim=1)  # stacking
 
@@ -123,7 +118,7 @@ class CBHG(nn.Module):
         # conv1d projections
         # (batch, features, time_step)
         for conv1d in self.conv1d_projections:
-            x = conv1d(x)
+            x = F.relu(conv1d(x)).clone()
 
         x += inputs  # residual
         # (batch, time_step, features)
