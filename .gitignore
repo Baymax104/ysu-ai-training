@@ -183,3 +183,5 @@ cython_debug/
 
 2-NLP/02_wavenet/data/*
 !2-NLP/02_wavenet/data/.placeholder
+
+2-NLP/04_easy/hub/*
