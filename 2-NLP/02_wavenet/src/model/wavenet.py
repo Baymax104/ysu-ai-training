@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 from torch import nn
 
-from block import ResidualBlock
-from layers import OneConv, OutputLayer
+from .block import ResidualBlock
+from .layers import OneConv, OutputLayer
 
 
 class WaveNet(nn.Module):
@@ -34,6 +34,9 @@ class WaveNet(nn.Module):
         )
 
     def forward(self, x):
+        # (batch, 256, time_step)
+        x = x.transpose(1, 2)
+        # (batch, 32, time_step)
         x = self.start_conv(x)
         total_skip = 0
         for block in self.blocks:
@@ -41,4 +44,5 @@ class WaveNet(nn.Module):
             total_skip = total_skip + skip
             x = residual
         output = self.output_layer(total_skip)
+        output = output.transpose(1, 2)
         return output

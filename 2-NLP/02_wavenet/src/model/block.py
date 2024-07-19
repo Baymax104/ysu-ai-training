@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 from torch import nn
-from causal_conv import CausalConv
-from residual import Residual
+
+from .causal_conv import CausalConv
+from .residual import Residual
 
 
 class ResidualBlock(nn.Module):
@@ -21,8 +22,7 @@ class ResidualBlock(nn.Module):
             residual_block = Residual(
                 in_channels=in_channels,
                 residual_channels=residual_channels,
-                skip_channels=skip_channels,
-                kernel_size=kernel_size
+                skip_channels=skip_channels
             )
             layer = nn.Sequential(causal_conv, residual_block)
             self.layers.append(layer)

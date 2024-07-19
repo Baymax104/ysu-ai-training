@@ -11,11 +11,11 @@ class CausalConv(nn.Module):
             out_channels=out_channels,
             kernel_size=kernel_size,
             stride=1,
-            padding=(kernel_size - 1) * dilation + 1,
+            padding=(kernel_size - 1) * dilation,
             dilation=dilation
         )
 
     def forward(self, x):
         x = self.conv(x)
-        x = x[:, :, :-self.causal_conv.padding[0]]
+        x = x[:, :, :-self.conv.padding[0]]
         return x

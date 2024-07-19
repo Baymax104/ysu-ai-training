@@ -180,3 +180,6 @@ cython_debug/
 
 2-NLP/01_tacotron/data/*
 !2-NLP/01_tacotron/data/.placeholder
+
+2-NLP/02_wavenet/data/*
+!2-NLP/02_wavenet/data/.placeholder

@@ -33,4 +33,5 @@ class OutputLayer(nn.Module):
         )
 
     def forward(self, x):
+        # (batch, skip_channel, time_step)
         return self.layer(x)
