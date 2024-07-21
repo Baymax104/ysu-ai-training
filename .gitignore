@@ -189,3 +189,4 @@ cython_debug/
 !2-NLP/03_unet/data/.placeholder
 
 2-NLP/04_easy/hub/*
+2-NLP/04_easy/logs/model

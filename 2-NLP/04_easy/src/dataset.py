@@ -29,17 +29,15 @@ class EasyDataset(Dataset):
         self.sentences = list(df['sentence'])
         labels = np.load(label_path)  # (21000, 40)
         self.labels = np.vsplit(labels, labels.shape[0])  # (1, 40) * 21000
-        self.num_classes = self.labels[0].shape[1]
-        assert len(self.sentences) == len(self.labels)
+        self.num_classes = self.labels[0].shape[1]  # 40
 
-        self.sentences = self.sentences[:len(self.sentences) * 5 // 10]
-        self.labels = self.labels[:len(self.labels) * 5 // 10]
         if train:
             self.sentences = self.sentences[:len(self.sentences) * 8 // 10]  # 80%
             self.labels = self.labels[:len(self.labels) * 8 // 10]
         else:
             self.sentences = self.sentences[len(self.sentences) * 8 // 10:]  # 20%
             self.labels = self.labels[len(self.labels) * 8 // 10:]
+        assert len(self.sentences) == len(self.labels)
 
         self.tokenizer = BertTokenizer.from_pretrained(params.MODEL_NAME)
 
