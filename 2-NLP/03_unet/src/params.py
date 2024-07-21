@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 import torch
 
-LOCAL = True
-DEBUG = True
+LOCAL = False
+DEBUG = False
 
 # Loading
 DEVICE = 'cuda' if torch.cuda.is_available() and not DEBUG else 'cpu'

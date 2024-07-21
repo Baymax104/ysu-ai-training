@@ -51,4 +51,4 @@ class MixtureDataset(Dataset):
             source1 = torch.cat([source1, blank], dim=1)
             source2 = torch.cat([source2, blank], dim=1)
 
-        return mixture, source1, source2
+        return mixture, (source1, source2)
