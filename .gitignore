@@ -169,24 +169,13 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-1-MachineLearning/07_collaborative_filtering/dataset/*
-!1-MachineLearning/07_collaborative_filtering/dataset/.placeholder
+**/data/*
+!**/data/.placeholder
 
-1-MachineLearning/04_cnn/dataset/*
-!1-MachineLearning/04_cnn/dataset/.placeholder
+**/dataset/*
+!**/dataset/.placeholder
 
-1-MachineLearning/03_bp_network/dataset/*
-!1-MachineLearning/03_bp_network/dataset/.placeholder
-
-2-NLP/01_tacotron/data/*
-!2-NLP/01_tacotron/data/.placeholder
-
-2-NLP/02_wavenet/data/*
-!2-NLP/02_wavenet/data/.placeholder
-
-2-NLP/03_unet/data/*
 2-NLP/03_unet/logs/model
-!2-NLP/03_unet/data/.placeholder
-
 2-NLP/04_easy/hub/*
 2-NLP/04_easy/logs/model
+4-Huggingface/01_bert/logs/model
