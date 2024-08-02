@@ -175,7 +175,4 @@ cython_debug/
 **/dataset/*
 !**/dataset/.placeholder
 
-2-NLP/03_unet/logs/model
-2-NLP/04_easy/hub/*
-2-NLP/04_easy/logs/model
-4-Huggingface/01_bert/logs/model
+**/logs/model
