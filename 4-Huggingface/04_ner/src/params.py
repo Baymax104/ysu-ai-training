@@ -10,11 +10,13 @@ NUM_WORKERS = 8 if not DEBUG else 0
 PREFETCH_FACTOR = 3 if not DEBUG else None
 
 # Train
-MODEL_NAME = 'dslim/bert-base-NER'
-EPOCHS = 10
+MODEL_NAME = 'google-bert/bert-base-uncased'
+EPOCHS = 15
 BATCH_SIZE = 32
 RANDOM_SEED = 200
-LR = 1e-5
+LR = 2e-5
+LR_STEPS = 5
+LR_RATIO = 0.1
 WEIGHT_DECAY = 1e-3
 
 # System

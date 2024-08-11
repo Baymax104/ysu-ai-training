@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import torch
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
+from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 from torchmetrics import MetricCollection
 from torchmetrics.classification import MulticlassAccuracy, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
@@ -39,6 +40,7 @@ def train():
     model = BertNerModel().to(params.DEVICE)
     criterion = CrossEntropyLoss().to(params.DEVICE)
     optimizer = AdamW(model.parameters(), lr=params.LR, weight_decay=params.WEIGHT_DECAY)
+    scheduler = StepLR(optimizer, step_size=params.LR_STEPS, gamma=params.LR_RATIO)
 
     print('=' * 50 + f'Training and Validating in {params.DEVICE}' + '=' * 50)
     for e in range(1, params.EPOCHS + 1):
@@ -60,6 +62,7 @@ def train():
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+        scheduler.step()
 
         train_loss /= len(train_loader)
         train_metrics = metrics.compute()
@@ -109,7 +112,7 @@ def test(model_file):
     loader = DataLoader(data, batch_size=params.BATCH_SIZE, shuffle=False, collate_fn=Collator(),
                         num_workers=params.NUM_WORKERS, prefetch_factor=params.PREFETCH_FACTOR)
 
-    recorder = Recorder(['Loss', 'Accuracy', 'F1-Score', 'Precision', 'Recall'], log_dir=params.LOG_DIR)
+    recorder = Recorder(['Loss', 'Accuracy', 'F1-Score', 'Precision', 'Recall'], log_dir=params.LOG_DIR, mode='test')
     metrics = MetricCollection({
         'Accuracy': MulticlassAccuracy(num_classes=9),
         'F1-Score': MulticlassF1Score(num_classes=9),

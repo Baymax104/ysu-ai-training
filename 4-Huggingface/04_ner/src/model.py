@@ -7,14 +7,14 @@ import params
 
 class BertNerModel(nn.Module):
 
-    def __init__(self, dropout=0.1):
+    def __init__(self, dropout=0.1, num_classes=9):
         super().__init__()
         self.bert_ner = AutoModel.from_pretrained(params.MODEL_NAME)
         self.output_layer = nn.Sequential(
             nn.Dropout(dropout),
             nn.Linear(768, 768),
             nn.Dropout(dropout),
-            nn.Linear(768, self.bert_ner.config.num_labels)
+            nn.Linear(768, num_classes)
         )
 
     def forward(self, input_ids, attention_mask):
