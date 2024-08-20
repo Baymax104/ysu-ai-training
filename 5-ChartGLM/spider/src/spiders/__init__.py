@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
 __all__ = [
-    'news_spider'
+    "news_spider",
+    "notice_spider"
 ]

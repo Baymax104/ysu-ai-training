@@ -1,11 +1,16 @@
 # -*- coding: UTF-8 -*-
 
-from spiders.news_spider import NewsSpider
+from spiders import *
 
 
 def crawl_news():
-    NewsSpider(redis_key='ysu:news', thread_count=4).start()
+    news_spider.NewsSpider(redis_key='ysu:news', thread_count=4).start()
+
+
+def crawl_notice():
+    notice_spider.NoticeSpider(redis_key='ysu:notice', thread_count=4).start()
 
 
 if __name__ == '__main__':
-    crawl_news()
+    # crawl_news()
+    crawl_notice()
