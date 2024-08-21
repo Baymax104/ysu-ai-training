@@ -13,7 +13,7 @@ from feapder.utils.log import log
 from items.text_item import TextItem
 
 
-class NoticeSpider(feapder.Spider):
+class NoticeSpider(feapder.BaseParser):
     """
     通知公告爬虫
     https://mec.ysu.edu.cn/index/tzgg.htm
@@ -34,7 +34,7 @@ class NoticeSpider(feapder.Spider):
     def parse(self, request, response):
         log.info(f'正在解析: {response.url}')
         bs = response.bs4()
-        title = bs.find('div', class_='title').string
-        content = bs.find('div', class_='v_news_content').get_text(separator=';', strip=True)
-        item = TextItem(title=title, content=content, type='notice')
+        title = bs.find('div', class_='title').string.replace('\u200B', '')
+        content = bs.find('div', class_='v_news_content').get_text(strip=True)
+        item = TextItem(title=title, content=content, type='通知公告')
         yield item

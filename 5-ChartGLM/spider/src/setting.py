@@ -104,8 +104,8 @@ SPIDER_MAX_RETRY_TIMES = 2  # 每个请求最大重试次数
 # ITEM_MAX_CACHED_COUNT = 5000
 # # item每批入库的最大数量
 # ITEM_UPLOAD_BATCH_MAX_SIZE = 1000
-# # item入库时间间隔
-# ITEM_UPLOAD_INTERVAL = 1
+# item入库时间间隔
+ITEM_UPLOAD_INTERVAL = 5
 # # 内存任务队列最大缓存的任务数，默认不限制；仅对AirSpider有效。
 # TASK_MAX_CACHED_SIZE = 0
 

@@ -1,16 +1,10 @@
 # -*- coding: UTF-8 -*-
+from feapder import Spider
 
 from spiders import *
 
-
-def crawl_news():
-    news_spider.NewsSpider(redis_key='ysu:news', thread_count=4).start()
-
-
-def crawl_notice():
-    notice_spider.NoticeSpider(redis_key='ysu:notice', thread_count=4).start()
-
-
 if __name__ == '__main__':
-    # crawl_news()
-    crawl_notice()
+    spider = Spider(redis_key='ysu', thread_count=10)
+    spider.add_parser(news_spider.NewsSpider)
+    spider.add_parser(notice_spider.NoticeSpider)
+    spider.start()
