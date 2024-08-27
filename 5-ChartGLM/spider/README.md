@@ -1,4 +1,10 @@
-爬取“新闻动态”和“通知公告”两个模块，共4893条记录
+爬取以下板块
 
-- [新闻动态](https://mec.ysu.edu.cn/xwdt.htm)：共3135条记录
-- [通知公告](https://mec.ysu.edu.cn/index/tzgg.htm)：共1758条记录
+- [党群新闻](https://mec.ysu.edu.cn/xwdt/dqxw.htm)
+- [行政新闻](https://mec.ysu.edu.cn/xwdt/xzxw.htm)
+- [教学信息](https://mec.ysu.edu.cn/xwdt/jxxx.htm)
+- [科研动态](https://mec.ysu.edu.cn/xwdt/kydt.htm)
+- [招生就业](https://mec.ysu.edu.cn/xwdt/zsjy.htm)
+- [教师信息](https://mec.ysu.edu.cn/xwdt/jsxx.htm)
+- [学工动态](https://mec.ysu.edu.cn/xwdt/xgdt.htm)
+- [通知公告](https://mec.ysu.edu.cn/index/tzgg.htm)

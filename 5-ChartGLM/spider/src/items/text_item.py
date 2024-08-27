@@ -23,4 +23,7 @@ class TextItem(Item):
         # self.id = None  # 主键
         self.title = kwargs.get('title')  # 标题
         self.content = kwargs.get('content')  # 文章内容
-        self.type = kwargs.get('type')  # 文本类别
+        self.section = kwargs.get('section')  # 文本类别
+
+    def __str__(self):
+        return f'TextItem(title = {self.title}, section = {self.section}, content = {self.content})'
