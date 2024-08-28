@@ -176,3 +176,5 @@ cython_debug/
 !**/dataset/.placeholder
 
 **/logs/model
+
+!5-ChartGLM/preprocessing/data/*
