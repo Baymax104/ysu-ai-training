@@ -9,4 +9,4 @@ if [ -z "$model_path" ]; then
 fi
 echo "模型所在位置: $MODEL_PATH"
 
-python finetune_hf.py ../preprocessing/data "$MODEL_PATH" configs/lora.yaml
+python src/finetune.py ../preprocessing/data "$MODEL_PATH" configs/lora.yaml
