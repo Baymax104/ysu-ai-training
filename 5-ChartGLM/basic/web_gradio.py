@@ -174,4 +174,4 @@ with gr.Blocks() as demo:
     emptyBtn.click(lambda: None, None, chatbot, queue=False)
 
 demo.queue()
-demo.launch(server_name="127.0.0.1", server_port=7870, inbrowser=True, share=False)
+demo.launch(server_name="127.0.0.1", server_port=6006, inbrowser=True, share=False)

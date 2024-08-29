@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import os
-import jieba
 import dataclasses as dc
 import functools
+import os
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Annotated, Any, Optional, Union
+
+import jieba
 import numpy as np
 import ruamel.yaml as yaml
 import torch
@@ -28,14 +29,14 @@ from transformers import (
     PreTrainedModel,
     PreTrainedTokenizer,
     PreTrainedTokenizerFast,
-    Seq2SeqTrainingArguments, AutoConfig,
+    Seq2SeqTrainingArguments,
+    AutoConfig,
 )
 from transformers import DataCollatorForSeq2Seq as _DataCollatorForSeq2Seq
-
 from transformers import Seq2SeqTrainer as _Seq2SeqTrainer
 
-ModelType = Union[PreTrainedModel, PeftModelForCausalLM]
-TokenizerType = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
+ModelType = Union[PreTrainedModel, PeftModelForCausalLM, AutoModelForCausalLM]
+TokenizerType = Union[PreTrainedTokenizer, PreTrainedTokenizerFast, AutoTokenizer]
 app = typer.Typer(pretty_exceptions_show_locals=False)
 
 
@@ -76,6 +77,7 @@ class Seq2SeqTrainer(_Seq2SeqTrainer):
             ignore_keys=None,
             **gen_kwargs,
     ) -> tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]:
+        output_ids = None
         if self.args.predict_with_generate:
             output_ids = inputs.pop('output_ids')
         input_ids = inputs['input_ids']
@@ -181,23 +183,19 @@ class FinetuningConfig(object):
 
     @classmethod
     def from_dict(cls, **kwargs) -> 'FinetuningConfig':
-        training_args = kwargs.get('training_args', None)
-        if training_args is not None and not isinstance(
-                training_args, Seq2SeqTrainingArguments
-        ):
-            gen_config = training_args.get('generation_config')
-            # TODO: a bit hacky
+        training_args: dict | None = kwargs.get('training_args', None)
+        if training_args is not None and not isinstance(training_args, Seq2SeqTrainingArguments):
+            gen_config: dict | None = training_args.get('generation_config')
+            # a bit hacky
             if not isinstance(gen_config, GenerationConfig):
-                training_args['generation_config'] = GenerationConfig(
-                    **gen_config
-                )
+                training_args['generation_config'] = GenerationConfig(**gen_config)
             kwargs['training_args'] = Seq2SeqTrainingArguments(**training_args)
 
-        data_config = kwargs.get('data_config')
+        data_config: dict | None = kwargs.get('data_config')
         if not isinstance(data_config, DataConfig):
             kwargs['data_config'] = DataConfig(**data_config)
 
-        peft_config = kwargs.get('peft_config', None)
+        peft_config: dict | None = kwargs.get('peft_config', None)
         if peft_config is not None and not isinstance(peft_config, PeftConfig):
             kwargs['peft_config'] = get_peft_config(peft_config)
         return cls(**kwargs)
@@ -218,7 +216,7 @@ def _load_datasets(
     if data_format in ('.csv', '.json', '.jsonl'):
         dataset_dct = load_dataset(
             data_format[1:],
-            data_dir=data_dir,
+            data_dir=str(data_dir),
             data_files=data_files,
             num_proc=num_proc,
         )
@@ -328,7 +326,7 @@ def process_batch(
 
 def process_batch_eval(
         batch: Mapping[str, Sequence],
-        tokenizer: PreTrainedTokenizer,
+        tokenizer: PreTrainedTokenizer | AutoTokenizer,
         max_input_length: int,
         max_output_length: int,
 ) -> dict[str, list]:
