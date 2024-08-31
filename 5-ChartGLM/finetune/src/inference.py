@@ -13,7 +13,10 @@ app = typer.Typer(pretty_exceptions_show_locals=False)
 
 
 @app.command()
-def main(model_dir: Annotated[str, typer.Argument()], prompt: Annotated[str, typer.Option()]):
+def main(
+    model_dir: Annotated[str, typer.Argument()],
+    prompt: Annotated[str, typer.Argument()]
+):
     model_dir = utils.resolve_path(model_dir)
     if (model_dir / 'adapter_config.json').exists():
         model = AutoPeftModelForCausalLM.from_pretrained(model_dir, trust_remote_code=True, device_map='auto')

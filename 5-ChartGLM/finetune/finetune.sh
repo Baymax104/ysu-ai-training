@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
-base_dir=$(pwd)
-echo "当前工作目录: $base_dir"
-
-model_path=$MODEL_PATH
-if [ -z "$model_path" ]; then
-  echo "未设置MODEL_PATH环境变量"
-  return 0
+if [ -n "$MODEL_PATH" ]; then
+  echo "模型所在路径: $MODEL_PATH"
+  python src/finetune.py ../preprocessing/data "$MODEL_PATH" configs/lora.yaml
 fi
-echo "模型所在位置: $MODEL_PATH"
-
-python src/finetune.py ../preprocessing/data "$MODEL_PATH" configs/lora.yaml

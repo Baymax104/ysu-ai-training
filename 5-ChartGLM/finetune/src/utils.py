@@ -12,9 +12,9 @@ def resolve_path(path: Union[str, Path]) -> Path:
 
 
 def sanity_check(
-        input_ids: Sequence[int],
-        output_ids: Sequence[int],
-        tokenizer,
+    input_ids: Sequence[int],
+    output_ids: Sequence[int],
+    tokenizer,
 ):
     print('--> Sanity check')
     for in_id, out_id in zip(input_ids, output_ids):

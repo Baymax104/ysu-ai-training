@@ -52,10 +52,7 @@ class FinetuningConfig(object):
             self.training_args.evaluation_strategy = 'no'
             self.data_config.val_file = None
         else:
-            self.training_args.per_device_eval_batch_size = (
-                    self.training_args.per_device_eval_batch_size
-                    or self.training_args.per_device_train_batch_size
-            )
+            self.training_args.per_device_eval_batch_size = self.training_args.per_device_eval_batch_size or self.training_args.per_device_train_batch_size
 
     @classmethod
     def from_dict(cls, **kwargs) -> 'FinetuningConfig':

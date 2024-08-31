@@ -11,18 +11,13 @@ from config import DataConfig
 
 
 def load_datasets(
-        data_dir: Path,
-        data_format: str,
-        data_files: dict[NamedSplit, str],
-        num_proc: Optional[int],
+    data_dir: Path,
+    data_format: str,
+    data_files: dict[NamedSplit, str],
+    num_proc: Optional[int]
 ) -> DatasetDict:
     if data_format in ('.csv', '.json', '.jsonl'):
-        dataset_dct = load_dataset(
-            data_format[1:],
-            data_dir=str(data_dir),
-            data_files=data_files,
-            num_proc=num_proc,
-        )
+        dataset_dct = load_dataset(data_format[1:], data_dir=str(data_dir), data_files=data_files, num_proc=num_proc)
     else:
         err_msg = f"Cannot load dataset in the '{data_format}' format."
         raise NotImplementedError(err_msg)
@@ -90,14 +85,14 @@ def process_batch_eval(batch, tokenizer, max_input_length, max_output_length) ->
                 break
             if message['role'] == 'tool':
                 raise NotImplementedError()
-            else:
-                new_input_ids = tokenizer.build_single_message(message['role'], '', message['content'])
-                if message['role'] == 'assistant':
-                    output_prompt, output_ids = (new_input_ids[:1], new_input_ids[1:])
-                    output_ids.append(tokenizer.eos_token_id)
-                    batched_input_ids.append(input_ids[:max_input_length] + output_prompt[:1])
-                    batched_output_ids.append(output_ids[:max_output_length])
-                input_ids += new_input_ids
+
+            new_input_ids = tokenizer.build_single_message(message['role'], '', message['content'])
+            if message['role'] == 'assistant':
+                output_prompt, output_ids = (new_input_ids[:1], new_input_ids[1:])
+                output_ids.append(tokenizer.eos_token_id)
+                batched_input_ids.append(input_ids[:max_input_length] + output_prompt[:1])
+                batched_output_ids.append(output_ids[:max_output_length])
+            input_ids += new_input_ids
 
     return {'input_ids': batched_input_ids, 'output_ids': batched_output_ids}
 
@@ -126,23 +121,18 @@ class DataManager(object):
         self._num_proc = data_config.num_proc
 
         self._dataset_dct = load_datasets(
-            utils.resolve_path(data_dir),
-            data_config.data_format,
-            data_config.data_files,
-            self._num_proc,
+            data_dir=utils.resolve_path(data_dir),
+            data_format=data_config.data_format,
+            data_files=data_config.data_files,
+            num_proc=self._num_proc,
         )
 
-    def _get_dataset(self, split: NamedSplit) -> Optional[Dataset]:
-        return self._dataset_dct.get(split, None)
-
-    def get_dataset(
-            self,
-            split: NamedSplit,
-            process_fn: Callable[[dict[str, Any]], dict[str, Any]],
-            batched: bool = True,
-            remove_orig_columns: bool = True,
-    ) -> Optional[Dataset]:
-        orig_dataset = self._get_dataset(split)
+    def get_dataset(self,
+                    split: NamedSplit,
+                    process_fn: Callable[[dict[str, Any]], dict[str, Any]],
+                    batched: bool = True,
+                    remove_orig_columns: bool = True) -> Optional[Dataset]:
+        orig_dataset: Dataset | None = self._dataset_dct.get(split, None)
         if orig_dataset is None:
             return
         remove_columns = orig_dataset.column_names if remove_orig_columns else None

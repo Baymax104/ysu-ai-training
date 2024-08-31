@@ -19,10 +19,11 @@ ensuring that the chat interface displays formatted text correctly.
 import os
 from pathlib import Path
 from threading import Thread
-from typing import Union
+from typing import Union, Annotated, Optional
 
 import gradio as gr
 import torch
+import typer
 from peft import AutoPeftModelForCausalLM, PeftModelForCausalLM
 from transformers import (
     AutoModelForCausalLM,
@@ -37,36 +38,26 @@ from transformers import (
 
 ModelType = Union[PreTrainedModel, PeftModelForCausalLM, AutoPeftModelForCausalLM, AutoModelForCausalLM]
 TokenizerType = Union[PreTrainedTokenizer, PreTrainedTokenizerFast, AutoTokenizer]
-
-MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/chatglm3-6b')
-TOKENIZER_PATH = os.environ.get("TOKENIZER_PATH", MODEL_PATH)
-
-
-def _resolve_path(path: Union[str, Path]) -> Path:
-    return Path(path).expanduser().resolve()
+model: ModelType
+tokenizer: TokenizerType
 
 
 def load_model_and_tokenizer(
-        model_dir: Union[str, Path], trust_remote_code: bool = True
+    model_dir: Union[str, Path] = None,
+    trust_remote_code: bool = True
 ) -> tuple[ModelType, TokenizerType]:
-    model_dir = _resolve_path(model_dir)
+    if model_dir is None:
+        model_dir = os.environ.get('MODEL_PATH', 'THUDM/chatglm3-6b')
+    model_dir = Path(model_dir).expanduser().resolve()
     if (model_dir / 'adapter_config.json').exists():
-        model = AutoPeftModelForCausalLM.from_pretrained(
-            model_dir, trust_remote_code=trust_remote_code, device_map='auto'
-        )
+        model = AutoPeftModelForCausalLM.from_pretrained(model_dir, trust_remote_code=trust_remote_code,
+                                                         device_map='auto')
         tokenizer_dir = model.peft_config['default'].base_model_name_or_path
     else:
-        model = AutoModelForCausalLM.from_pretrained(
-            model_dir, trust_remote_code=trust_remote_code, device_map='auto'
-        )
+        model = AutoModelForCausalLM.from_pretrained(model_dir, trust_remote_code=trust_remote_code, device_map='auto')
         tokenizer_dir = model_dir
-    tokenizer = AutoTokenizer.from_pretrained(
-        tokenizer_dir, trust_remote_code=trust_remote_code
-    )
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir, trust_remote_code=trust_remote_code)
     return model, tokenizer
-
-
-model, tokenizer = load_model_and_tokenizer(MODEL_PATH, trust_remote_code=True)
 
 
 class StopOnTokens(StoppingCriteria):
@@ -147,31 +138,39 @@ def predict(history, max_length, top_p, temperature):
             yield history
 
 
-with gr.Blocks() as demo:
-    gr.HTML("""<h1 align="center">ChatGLM3-6B Gradio Simple Demo</h1>""")
-    chatbot = gr.Chatbot()
+def main(model_dir: Annotated[Optional[str], typer.Argument()] = None):
+    global model, tokenizer
+    model, tokenizer = load_model_and_tokenizer(model_dir, trust_remote_code=True)
 
-    with gr.Row():
-        with gr.Column(scale=4):
-            with gr.Column(scale=12):
-                user_input = gr.Textbox(show_label=False, placeholder="Input...", lines=10, container=False)
-            with gr.Column(min_width=32, scale=1):
-                submitBtn = gr.Button("Submit")
-        with gr.Column(scale=1):
-            emptyBtn = gr.Button("Clear History")
-            max_length = gr.Slider(0, 32768, value=8192, step=1.0, label="Maximum length", interactive=True)
-            top_p = gr.Slider(0, 1, value=0.8, step=0.01, label="Top P", interactive=True)
-            temperature = gr.Slider(0.01, 1, value=0.6, step=0.01, label="Temperature", interactive=True)
+    with gr.Blocks() as demo:
+        gr.HTML("""<h1 align="center">ChatGLM3-6B Gradio Simple Demo</h1>""")
+        chatbot = gr.Chatbot()
+
+        with gr.Row():
+            with gr.Column(scale=4):
+                with gr.Column(scale=12):
+                    user_input = gr.Textbox(show_label=False, placeholder="Input...", lines=10, container=False)
+                with gr.Column(min_width=32, scale=1):
+                    submitBtn = gr.Button("Submit")
+            with gr.Column(scale=1):
+                emptyBtn = gr.Button("Clear History")
+                max_length = gr.Slider(0, 32768, value=8192, step=1.0, label="Maximum length", interactive=True)
+                top_p = gr.Slider(0, 1, value=0.5, step=0.01, label="Top P", interactive=True)
+                temperature = gr.Slider(0.01, 1, value=0.5, step=0.01, label="Temperature", interactive=True)
+
+        def user(query, history):
+            return "", history + [[parse_text(query), ""]]
+
+        submitBtn.click(user, [user_input, chatbot], [user_input, chatbot], queue=False).then(
+            predict,
+            [chatbot, max_length, top_p, temperature],
+            chatbot
+        )
+        emptyBtn.click(lambda: None, None, chatbot, queue=False)
+
+    demo.queue()
+    demo.launch(server_name="127.0.0.1", server_port=6006, inbrowser=True, share=False)
 
 
-    def user(query, history):
-        return "", history + [[parse_text(query), ""]]
-
-
-    submitBtn.click(user, [user_input, chatbot], [user_input, chatbot], queue=False).then(
-        predict, [chatbot, max_length, top_p, temperature], chatbot
-    )
-    emptyBtn.click(lambda: None, None, chatbot, queue=False)
-
-demo.queue()
-demo.launch(server_name="127.0.0.1", server_port=6006, inbrowser=True, share=False)
+if __name__ == '__main__':
+    typer.run(main)

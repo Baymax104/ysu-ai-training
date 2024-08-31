@@ -35,10 +35,10 @@ app = typer.Typer(pretty_exceptions_show_locals=False)
 
 @app.command()
 def main(
-        data_dir: Annotated[str, typer.Argument()],
-        model_dir: Annotated[str, typer.Argument()],
-        config_file: Annotated[str, typer.Argument()],
-        auto_resume_from_checkpoint: str = typer.Argument(default='')
+    data_dir: Annotated[str, typer.Argument()],
+    model_dir: Annotated[str, typer.Argument()],
+    config_file: Annotated[str, typer.Argument()],
+    auto_resume_from_checkpoint: str = typer.Argument(default='')
 ):
     ft_config = FinetuningConfig.from_file(config_file)
     tokenizer, model = load_tokenizer_and_model(model_dir, peft_config=ft_config.peft_config)
