@@ -111,23 +111,3 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         # x(batch_size, sequence_length, embedding_size)
         return self.pe[:, :x.size(1)]
-
-
-if __name__ == '__main__':
-    x = torch.arange(20, dtype=torch.float).view(1, 5, 4)
-    mask = torch.tensor([[1, 1, 1, 0, 0]], dtype=torch.float)
-    attention = MultiHeadAttention(4, 2, 0.1)
-    result = attention(x, x, x, mask)
-    print(f'Attention: {result.size()}')
-
-if __name__ == '__main__':
-    x = torch.arange(20, dtype=torch.float).view(1, 5, 4)
-    feedforward = FeedForward(4, 4, 0.1)
-    result = feedforward(x)
-    print(f'Feedforward: {result.size()}')
-
-if __name__ == '__main__':
-    x = torch.arange(20, dtype=torch.float).view(1, 5, 4)
-    positional_encoding = PositionalEncoding(256, 4)
-    result = positional_encoding(x)
-    print(f'Positional Encoding: {result.size()}')

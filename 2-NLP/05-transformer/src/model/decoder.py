@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
-import torch
 from torch import nn
 
-from sublayers import MultiHeadAttention, FeedForward
+from .sublayers import MultiHeadAttention, FeedForward
 
 
 class DecoderLayer(nn.Module):
@@ -38,22 +37,3 @@ class Decoder(nn.Module):
         for layer in self.layers:
             output_emb = layer(output_emb, encoder_output, attention_mask, causal_mask)
         return output_emb
-
-
-if __name__ == '__main__':
-    x = torch.arange(20, dtype=torch.float).view(1, 5, 4)
-    encoder_output = torch.randn([1, 5, 4], dtype=torch.float)
-    attention_mask = torch.tensor([[1, 1, 1, 0, 0]], dtype=torch.float)
-    causal_mask = torch.tril(torch.ones(5, 5, dtype=torch.float)).unsqueeze(0)
-    decoder_layer = DecoderLayer(4, 2, 16, 0.1)
-    result = decoder_layer(x, encoder_output, attention_mask, causal_mask)
-    print(f'Decoder Layer: {result.size()}')
-
-if __name__ == '__main__':
-    x = torch.arange(20, dtype=torch.float).view(1, 5, 4)
-    encoder_output = torch.randn([1, 5, 4], dtype=torch.float)
-    attention_mask = torch.tensor([[1, 1, 1, 0, 0]], dtype=torch.float)
-    causal_mask = torch.tril(torch.ones(5, 5, dtype=torch.float)).unsqueeze(0)
-    decoder = Decoder(2, 4, 2, 16, 0.1)
-    result = decoder(x, encoder_output, attention_mask, causal_mask)
-    print(f'Decoder: {result.size()}')
