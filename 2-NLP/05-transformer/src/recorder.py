@@ -8,7 +8,7 @@ from prettytable import PrettyTable
 
 class Recorder:
 
-    def __init__(self, metrics: list[str], steps=1, log_dir='./logs', use_tensorboard=False):
+    def __init__(self, metrics: list[str], steps=1, log_dir='./logs', use_tensorboard=True):
         assert steps > 0
         self.metrics = metrics
         self.train = steps > 1
@@ -24,7 +24,7 @@ class Recorder:
 
         self.log_dir.mkdir(exist_ok=True)
 
-        if self.use_tensorboard:
+        if self.train and self.use_tensorboard:
             from torch.utils.tensorboard import SummaryWriter
             self.summary_writer = SummaryWriter(str(self.log_dir))
 
@@ -38,7 +38,7 @@ class Recorder:
                     value = value.detach().cpu().numpy()
                 self.record_dict[metric][step - 1] = value
 
-                if self.use_tensorboard:
+                if self.train and self.use_tensorboard:
                     self.summary_writer.add_scalar(metric, value, step)
 
         step_column = [step] if self.train else []

@@ -22,6 +22,7 @@ class ScaledDotProductAttention(nn.Module):
         qk = torch.matmul(query, key.transpose(-1, -2))
         qk = qk / torch.sqrt(torch.tensor(d_k, dtype=torch.float))
         if mask is not None:
+            qk = qk.to(torch.float32)
             qk = torch.masked_fill(qk, torch.eq(mask, 0), -1e9)
         qk = F.softmax(qk, dim=-1)
         qk = self.dropout(qk)

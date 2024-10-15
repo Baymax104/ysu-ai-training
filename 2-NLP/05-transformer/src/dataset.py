@@ -9,11 +9,11 @@ from tqdm import tqdm
 
 class WMTDataset(Dataset):
 
-    def __init__(self, split: Literal['train', 'validation', 'test']):
-        data = load_dataset('wmt/wmt17', 'zh-en', split=split)
+    def __init__(self, split: Literal['train', 'validation', 'test'], data_dir='./data'):
+        data = load_dataset('wmt/wmt17', 'zh-en', split=split, cache_dir=data_dir)
 
         if split == 'train':
-            data = data[:2]['translation']
+            data = data[:len(data) // 1000]['translation']
         else:
             data = data[:]['translation']
 
@@ -63,8 +63,8 @@ class Collator:
 
         return {
             'input_ids': batch_input['input_ids'],
-            'input_attention_mask': batch_input['attention_mask'],
+            'input_attention_mask': batch_input['attention_mask'].view(-1, 1, 1, self.max_length),
             'output_ids': batch_output['input_ids'],
-            'output_attention_mask': batch_output['attention_mask'],
+            'output_attention_mask': batch_output['attention_mask'].view(-1, 1, 1, self.max_length),
             'causal_mask': causal_mask
         }
