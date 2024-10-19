@@ -14,6 +14,7 @@
 2. 实现WaveNet模型
 3. 实现Wave-U-Net模型
 4. 使用BERT模型完成论文学科分类
+5. 实现Transformer完成WMT翻译
 
 ## Section 3: PaperReading
 
