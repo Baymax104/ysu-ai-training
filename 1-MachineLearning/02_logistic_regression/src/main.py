@@ -11,8 +11,8 @@ from tqdm import tqdm
 from LogisticRegression import LogisticRegression
 
 random_seed = 500
-epoch = 100
-learning_rate = 0.01
+epoch = 350
+learning_rate = 0.05
 
 
 def load_data():
@@ -23,8 +23,8 @@ def load_data():
 
     x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=random_seed)
     scaler = StandardScaler()
-    scaler.fit_transform(x_train)
-    scaler.transform(x_test)
+    x_train = scaler.fit_transform(x_train)
+    x_test = scaler.transform(x_test)
 
     x_train, y_train = np.array(x_train), np.array(y_train)
     x_test, y_test = np.array(x_test), np.array(y_test)
