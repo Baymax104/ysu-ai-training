@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
@@ -30,14 +31,33 @@ def accuracy(y_pred, y_true):
     return np.sum(y_pred == y_true) / n
 
 
+def plot_cluster(x, labels, feature_names):
+    colors = ['red', 'green', 'blue']
+    markers = ['o', 's', '^']
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    for k in range(max(labels) + 1):
+        ax.scatter(x[np.array(labels) == k, 0], x[np.array(labels) == k, 1],
+                   color=colors[k], marker=markers[k], label=f'Cluster {k}')
+
+    ax.set_title('K-Means Clustering')
+    ax.set_xlabel(feature_names[0])
+    ax.set_ylabel(feature_names[1])
+    ax.legend()
+    plt.savefig('../logs/cluster.png')
+
+
 def train(model, train_data, train_target):
     acc_history = []
+    closest_class = []
     for _ in tqdm(range(EPOCH)):
         closest_class = model.fit(train_data)
         acc = accuracy(closest_class, train_target)
         acc_history.append(acc)
 
     print(f'Train [Accuracy]: {max(acc_history)}')
+    plot_cluster(train_data, closest_class, ['sepal length (cm)', 'sepal width (cm)'])
 
 
 def test(model, test_data, test_target):
